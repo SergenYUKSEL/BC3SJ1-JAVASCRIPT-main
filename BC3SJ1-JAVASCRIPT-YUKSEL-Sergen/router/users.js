@@ -91,8 +91,13 @@ router
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax'
         })
-        // Ne pas renvoyer le token dans le body (httpOnly cookie suffit)
-        res.json({ message: 'Connexion réussie' })
+        // En développement : token renvoyé dans le body pour faciliter les tests Postman
+        // En production : cookie httpOnly suffit, token absent du body
+        const response = { message: 'Connexion réussie' }
+        if (process.env.NODE_ENV !== 'production') {
+            response.token = token
+        }
+        res.json(response)
     })
 })
 
