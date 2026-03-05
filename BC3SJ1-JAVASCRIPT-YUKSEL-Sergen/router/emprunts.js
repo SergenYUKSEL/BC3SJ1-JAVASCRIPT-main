@@ -1,9 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const db = require('./../services/database')
 
-const JWT_SECRET = "HelloThereImObiWan"
+const JWT_SECRET = process.env.JWT_SECRET
 
 function authenticateToken(req, res, next) {
     const token = req.cookies.token
