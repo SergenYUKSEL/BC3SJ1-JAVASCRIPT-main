@@ -34,11 +34,11 @@ const corsOptions = {
 
 const router = express.Router()
 router.use(helmet({
-    contentSecurityPolicy: false // désactivé pour ne pas casser les assets en dev
+    contentSecurityPolicy: false
 }))
-router.use(helmet.frameguard({ action: 'deny' }))           // X-Frame-Options: DENY  (clickjacking)
-router.use(helmet.noSniff())                                  // X-Content-Type-Options: nosniff
-router.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true })) // HSTS (MITM)
+router.use(helmet.frameguard({ action: 'deny' }))
+router.use(helmet.noSniff())
+router.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }))
 router.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }))
 
 router.use(bodyParser.json())
