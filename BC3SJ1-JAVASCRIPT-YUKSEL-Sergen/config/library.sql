@@ -73,6 +73,24 @@ INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`, `dat
 (1, 'Smith', 'John', 'john@smith.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:54:09', 'admin'),
 (2, 'Lord', 'Marc', 'marc@lord.com', '$2b$10$6UQGsRHPMkIjH.1RqeTN/Oo4XRCXwBJEBdOb9lNjddbRIIj3/Olk6', '2023-11-09 21:59:23', 'utilisateur');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `emprunts`
+--
+
+CREATE TABLE `emprunts` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `livre_id` int NOT NULL,
+  `utilisateur_id` int NOT NULL,
+  `date_emprunt` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `date_retour_prevue` date NOT NULL,
+  `date_retour_effective` date DEFAULT NULL,
+  `statut` enum('en cours','retourné','en retard') DEFAULT 'en cours',
+  FOREIGN KEY (`livre_id`) REFERENCES `livres`(`id`),
+  FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Index pour les tables déchargées
 --

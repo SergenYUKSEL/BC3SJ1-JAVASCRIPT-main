@@ -8,6 +8,8 @@ import BookList from './components/BookList.jsx'
 import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
 import DashBoard from './components/DashBoard.jsx'
+import MesEmprunts from './components/MesEmprunts.jsx'
+import Profile from './components/Profile.jsx'
 import './style.css'
 const base = import.meta.env.VITE_BASE_URL || '/'
 
@@ -25,6 +27,8 @@ function App() {
                 <Route path="/add_book" element={<Template userT={userT} page="Ajout d'un livre"><AddBook /></Template>} />
                 <Route path="/book/:bookId" element={<Template userT={userT} page="Détail du livre"><BookDetails /></Template>} />
                 <Route path="/edit_book/:bookId" element={<Template userT={userT} page="Édition du livre"><EditBook /></Template>} />
+                <Route path="/mes-emprunts" element={<Template userT={userT} page="Mes emprunts"><MesEmprunts /></Template>} />
+                <Route path="/profile" element={<Template userT={userT} page="Mon profil"><Profile /></Template>} />
             </Routes>
         </Router>
     );

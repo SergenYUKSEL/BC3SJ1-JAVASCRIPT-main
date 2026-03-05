@@ -2,6 +2,7 @@ require('dotenv').config()
 const path = require('path')
 const express = require('express')
 const server = require('./server')
+const { startReminderJob } = require('./services/reminderJob')
 
 const app = express()
 const baseUrl = process.env.BASE_URL || ''
@@ -13,4 +14,5 @@ app.get(`${baseUrl}/*`, (req, res) => {
 });
 app.listen(3000, () => {
     console.info('server démarré')
+    startReminderJob()
 })

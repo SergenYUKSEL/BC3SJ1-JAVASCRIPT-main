@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import './../styles/booklist.css'
 
 const BookList = () => {
@@ -57,7 +57,7 @@ const BookList = () => {
                                 <td>{book.auteur}</td>
                                 <td>{book.date_publication}</td>
                                 <td>{book.statut}</td>
-                                <td><a href={`${base}book/${book.id}`}>Voir les détails</a></td>
+                                <td><Link to={`/book/${book.id}`}>Voir les détails</Link></td>
                             </tr>
                         ))}
                     </tbody>

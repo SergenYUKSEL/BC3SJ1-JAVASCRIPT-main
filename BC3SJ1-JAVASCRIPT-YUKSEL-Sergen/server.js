@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const booksrouter = require('./router/books')
 const usersRouter = require('./router/users')
+const empruntsRouter = require('./router/emprunts')
 const cors = require('cors')
 const path = require('path')
 const cookieParser = require('cookie-parser')
@@ -33,6 +34,7 @@ router.use(cors(corsOptions));
 router.use(cookieParser());
 router.use('/api/books', booksrouter);
 router.use('/api/users', usersRouter);
+router.use('/api/emprunts', empruntsRouter);
 
 router.post('/api/logout', (req, res) => {
     res.clearCookie('token');

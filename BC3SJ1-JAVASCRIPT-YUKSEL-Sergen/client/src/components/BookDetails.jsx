@@ -7,6 +7,7 @@ const BookDetails = () => {
     const navigate = useNavigate()
     const [book, setBook] = useState(null)
     const [userRole, setUserRole] = useState('')
+    const [empruntMessage, setEmpruntMessage] = useState('')
 
     useEffect(() => {
         fetch(`${base}api/books/${bookId}`, {
@@ -16,12 +17,15 @@ const BookDetails = () => {
             .then(data => setBook(data[0]))
             .catch(error => console.error('Erreur:', error));
 
-        fetch(base+'api/users/user-role', {
+        fetch(base+'api/session', {
             credentials: 'include'
         })
-            .then(response => response.json())
-            .then(data => setUserRole(data.role))
-            .catch(error => setUserRole('Guest'));
+            .then(response => {
+                if (response.status === 200) return response.json()
+                throw new Error('Non authentifié')
+            })
+            .then(data => setUserRole(data.user.role))
+            .catch(() => setUserRole('Guest'));
     }, [bookId]);
 
     const handleBack = () => {
@@ -34,6 +38,21 @@ const BookDetails = () => {
 
     const handleDelete = () => {
         console.log('Supprimer le livre:', bookId);
+    };
+
+    const handleEmprunt = () => {
+        fetch(`${base}api/emprunts`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ livre_id: book.id })
+        })
+            .then(res => res.json())
+            .then(data => {
+                setEmpruntMessage(data.message)
+                setBook(prev => ({ ...prev, statut: 'emprunté' }))
+            })
+            .catch(() => setEmpruntMessage('Erreur lors de l\'emprunt'))
     };
 
     if (!book) {
@@ -52,6 +71,10 @@ const BookDetails = () => {
             </div>
             <div className="back-button">
                 <button onClick={handleBack}>Retour à la liste des livres</button>
+                {userRole && userRole !== 'Guest' && book.statut === 'disponible' && (
+                    <button onClick={handleEmprunt}>Emprunter</button>
+                )}
+                {empruntMessage && <p>{empruntMessage}</p>}
                 {userRole === 'admin' && (
                     <>
                         <button onClick={handleEdit}>Modifier le livre</button>
