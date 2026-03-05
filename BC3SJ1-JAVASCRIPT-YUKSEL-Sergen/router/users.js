@@ -41,9 +41,9 @@ router
     db.query(sql, [name, prenom, email, hashedPassword, role || 'utilisateur'], (err, result) => {
         if (err) {
             console.error(err)
-            res.status(500).send('Problème SQL')
+            res.status(500).json({ message: 'Problème SQL' })
         }
-        else res.send('Utilisateur enregistré')
+        else res.json({ message: 'Utilisateur enregistré' })
     })
 })
 .get('/pass/:pass', async (req, res)=> {
@@ -67,12 +67,12 @@ router
     db.query(sql, [email], async (err, results) => {
         if (err) throw err
         if (results.length === 0) {
-            return res.status(400).send('Utilisateur non trouvé')
+            return res.status(400).json({ message: 'Utilisateur non trouvé' })
         }
         const user = results[0]
         const isMatch = await bcrypt.compare(password, user.mot_de_passe)
         if (!isMatch) {
-            return res.status(400).send('Mot de passe incorrect')
+            return res.status(400).json({ message: 'Mot de passe incorrect' })
         }
 
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '2h' })

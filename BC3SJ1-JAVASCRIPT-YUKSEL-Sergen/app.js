@@ -1,7 +1,10 @@
+require('dotenv').config()
+const path = require('path')
 const express = require('express')
 const server = require('./server')
 
 const app = express()
+const baseUrl = process.env.BASE_URL || ''
 
 app.use(`${baseUrl}/`,server)
 

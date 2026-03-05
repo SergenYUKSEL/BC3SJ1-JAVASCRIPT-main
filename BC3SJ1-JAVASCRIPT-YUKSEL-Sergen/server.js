@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const booksrouter = require('./router/books')
@@ -20,7 +21,7 @@ function authenticateToken(req, res, next) {
     })
 }
 const corsOptions = {
-    origin: 'https://exam.andragogy.fr',
+    origin: process.env.CORS_ORIGIN || 'https://exam.andragogy.fr',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204
@@ -34,7 +35,7 @@ router.use('/api/books', booksrouter);
 router.use('/api/users', usersRouter);
 
 router.post('/api/logout', (req, res) => {
-    req.session.destroy();
+    res.clearCookie('token');
     res.json({ message: 'Déconnexion réussie' });
 });
 
