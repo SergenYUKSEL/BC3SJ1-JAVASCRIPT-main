@@ -59,12 +59,16 @@ const MesEmprunts = () => {
                                 <td>{new Date(emprunt.date_retour_prevue).toLocaleDateString('fr-FR')}</td>
                                 <td>{emprunt.statut}</td>
                                 <td>
-                                    {emprunt.statut === 'en cours' || emprunt.statut === 'en retard' ? (
+                                    {(emprunt.statut === 'en cours' || emprunt.statut === 'en retard') && (
                                         <button onClick={() => handleRetour(emprunt.id)}>
                                             Signaler le retour
                                         </button>
-                                    ) : (
-                                        <span>Retourné le {new Date(emprunt.date_retour_effective).toLocaleDateString('fr-FR')}</span>
+                                    )}
+                                    {emprunt.statut === 'retour demandé' && (
+                                        <span>⏳ En attente de validation</span>
+                                    )}
+                                    {emprunt.statut === 'retourné' && (
+                                        <span>✅ Retourné le {new Date(emprunt.date_retour_effective).toLocaleDateString('fr-FR')}</span>
                                     )}
                                 </td>
                             </tr>

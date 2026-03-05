@@ -71,14 +71,37 @@ router.get('/mes-emprunts', authenticateToken, (req, res) => {
     })
 })
 
-// PUT /api/emprunts/:id/retour — signaler un retour
+// PUT /api/emprunts/:id/retour — signaler un retour (en attente validation admin)
 router.put('/:id/retour', authenticateToken, (req, res) => {
     const empruntId = req.params.id
     const utilisateur_id = req.user.id
 
     db.query(
-        'SELECT * FROM emprunts WHERE id = ? AND utilisateur_id = ?',
+        "SELECT * FROM emprunts WHERE id = ? AND utilisateur_id = ? AND statut IN ('en cours', 'en retard')",
         [empruntId, utilisateur_id],
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Erreur SQL' })
+            if (results.length === 0) return res.status(404).json({ message: 'Emprunt non trouvé' })
+
+            db.query(
+                "UPDATE emprunts SET statut = 'retour demandé' WHERE id = ?",
+                [empruntId],
+                (err) => {
+                    if (err) return res.status(500).json({ message: 'Erreur SQL' })
+                    res.json({ message: 'Demande de retour envoyée, en attente de validation' })
+                }
+            )
+        }
+    )
+})
+
+// PUT /api/emprunts/:id/valider-retour — admin accepte le retour
+router.put('/:id/valider-retour', authenticateToken, isAdmin, (req, res) => {
+    const empruntId = req.params.id
+
+    db.query(
+        "SELECT * FROM emprunts WHERE id = ? AND statut = 'retour demandé'",
+        [empruntId],
         (err, results) => {
             if (err) return res.status(500).json({ message: 'Erreur SQL' })
             if (results.length === 0) return res.status(404).json({ message: 'Emprunt non trouvé' })
@@ -87,17 +110,32 @@ router.put('/:id/retour', authenticateToken, (req, res) => {
             const today = new Date().toISOString().split('T')[0]
 
             db.query(
-                "UPDATE emprunts SET date_retour_effective = ?, statut = 'retourné' WHERE id = ?",
+                "UPDATE emprunts SET statut = 'retourné', date_retour_effective = ? WHERE id = ?",
                 [today, empruntId],
                 (err) => {
                     if (err) return res.status(500).json({ message: 'Erreur SQL' })
 
                     db.query("UPDATE livres SET statut = 'disponible' WHERE id = ?", [emprunt.livre_id], (err) => {
                         if (err) return res.status(500).json({ message: 'Erreur SQL' })
-                        res.json({ message: 'Retour enregistré' })
+                        res.json({ message: 'Retour validé' })
                     })
                 }
             )
+        }
+    )
+})
+
+// PUT /api/emprunts/:id/refuser-retour — admin refuse le retour
+router.put('/:id/refuser-retour', authenticateToken, isAdmin, (req, res) => {
+    const empruntId = req.params.id
+
+    db.query(
+        "UPDATE emprunts SET statut = 'en cours' WHERE id = ? AND statut = 'retour demandé'",
+        [empruntId],
+        (err, result) => {
+            if (err) return res.status(500).json({ message: 'Erreur SQL' })
+            if (result.affectedRows === 0) return res.status(404).json({ message: 'Emprunt non trouvé' })
+            res.json({ message: 'Retour refusé, emprunt remis en cours' })
         }
     )
 })

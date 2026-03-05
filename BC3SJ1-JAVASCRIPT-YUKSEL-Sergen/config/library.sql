@@ -86,7 +86,7 @@ CREATE TABLE `emprunts` (
   `date_emprunt` timestamp DEFAULT CURRENT_TIMESTAMP,
   `date_retour_prevue` date NOT NULL,
   `date_retour_effective` date DEFAULT NULL,
-  `statut` enum('en cours','retourné','en retard') DEFAULT 'en cours',
+  `statut` enum('en cours','retourné','en retard','retour demandé') DEFAULT 'en cours',
   FOREIGN KEY (`livre_id`) REFERENCES `livres`(`id`),
   FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
